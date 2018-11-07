@@ -16,7 +16,7 @@ monikerRange: '> tfs-2018'
 
 **Azure Pipelines | TFS 2018**
 
-Use this task in a build or release pipeline to build, tag, push, or run Docker images, or run a Docker command. This task can be used with Docker or Azure Container registry.
+Use this task in a build or release pipeline to build, tag, push, or run Docker images, or run a Docker command. This task can be used with Docker or Azure Container Registry (ACR).
 
 > [!NOTE]
 > 
@@ -36,13 +36,13 @@ run Docker images, or execute other operations offered by the Docker CLI:
 
 ## Build Docker images
 
-We will have to build the container images before it is pushed to the Azure Container Registry (ACR) or Container Registry. You can use the YAML approach or Designer to configure the same.
+We have to build the container images before it is pushed to the ACR or Container Registry. You can use the YAML approach or Designer to configure the same.
 
 # [YAML](#tab/yaml)
 
 ## Container Registry
 
-You need to establish the container registry settings first to build, push and deploy docker images onto Azure Container Registry (ACR) or Container registry.
+You need to establish the container registry settings first to build, push and deploy container images into ACR or Container Registry.
 
 ### Using ACR approach-
 
@@ -57,6 +57,8 @@ Build a Dockerfile into an image with a registry-qualified name and multiple tag
 ```
 
 **azureSubscriptionEndpoint**: input is the name of Azure Service Connection. See [Azure Resource Manager service connection](../../library/connect-to-azure.md) to manually set up the connection.
+
+### Private Container Registries
 
 For other private container registries (Docker Registry)
 
@@ -76,7 +78,7 @@ This will result in a docker login to the container registry by using the servic
 
 ## Commands
 
-Once the connection is established to the ACR, we can now run docker build to build the container images. Below is the sample yaml file to build the container image.
+Once the connection is established to the ACR, we can run docker build command to build the container images. Below is the sample yaml file to build the container image.
 
 ```yaml
 - task: Docker@1
@@ -231,7 +233,7 @@ The arguments which are in the docker task are segregated into different section
 
 ![Container Registry](_img/acrsetings.png)
 
-For Azure Container Registry,
+For ACR,
 
 <table><thead><tr><th>Argument</th><th>Description</th></tr></thead>
 <tr><td>Container Registry Type</td><td>Select the Azure Container Registry to connect using an Azure Service connection</td></tr>
