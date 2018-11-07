@@ -33,9 +33,21 @@ run Docker images, or execute other operations offered by the Docker CLI:
   For example, You can use the Docker task to sign into ACR and then use a subsequent script to pull an image and scan the container image for vulnerabilities.
 
 ::: moniker range="> tfs-2018"
-## YAML snippet
-### Build Docker images
+
+## Build Docker images
+
+We will have to build the container images before it is pushed to the Azure Container Registry (ACR) or Container Registry. You can use the YAML approach or Designer to configure the same.
+
+# [YAML](#tab/yaml)
+
+## Container Registry
+
+You need to establish the container registry settings first to build, push and deploy docker images onto Azure Container Registry (ACR) or Container registry.
+
+### Using ACR approach-
+
 Build a Dockerfile into an image with a registry-qualified name and multiple tags such as the build ID, source branch name and Git tags:
+
 ```yaml
 - task: Docker@1
   displayName: 'Build an image'
@@ -43,7 +55,11 @@ Build a Dockerfile into an image with a registry-qualified name and multiple tag
     azureSubscriptionEndpoint: 'ContosoAzureSubscription'
     azureContainerRegistry: contoso.azurecr.io
 ```
-For other private container registries
+
+**azureSubscriptionEndpoint**: input is the name of Azure Service Connection. See [Azure Resource Manager service connection](../../library/connect-to-azure.md) to manually set up the connection.
+
+For other private container registries (Docker Registry)
+
 ```yaml
 - task: Docker@1
   displayName: 'Build an image'
@@ -51,18 +67,71 @@ For other private container registries
     containerregistrytype: 'Container Registry'
     dockerRegistryEndpoint: Contoso
 ```
-'azureSubscriptionEndpoint' input is the name of Azure Service Connection. See [Azure Resource Manager service connection](../../library/connect-to-azure.md) to manually set up the connection.
-'dockerRegistryEndpoint' input is the name of [Docker Registry service connection](../../library/service-endpoints.md).
+
+**dockerRegistryEndpoint**: input is the name of [Docker Registry service connection](../../library/service-endpoints.md).
 
 This will result in a docker login to the container registry by using the service connection and then a docker build command will be used to build and tag the image. For example, a simplified version of the command run is:
+
 > docker build -t contoso.azurecr.io/contoso-ci:11 .
 
-By writing minimal yaml you can build and push an image which is tagged with '$(Build.BuildId)' and has rich metadata about the repository, commit, build information to the container image as Docker labels.
+## Commands
+
+Once the connection is established to the ACR, we can now run docker build to build teh container images. Below is the sample yaml file to build the container image.
+
+```yaml
+- task: Docker@1
+  displayName: 'Build an image'
+  inputs:
+    azureSubscriptionEndpoint: 'ContosoAzureSubscription'
+    azureContainerRegistry: contoso.azurecr.io
+    dockerFile: 'docker'
+    command: 'Build an image'
+    arguments: tag
+```
+
+## Advanced Options
+
+TO_BE_ADDED
+
+By writing minimal yaml you can build and push an image which is tagged with **$(Build.BuildId)** and has rich metadata about the repository, commit, build information to the container image as Docker labels.
 The task takes care of details like tagging image with the registry hostname and port image before pushing the image to a private registry like Azure Container Registry (ACR). It also helps you to follow Docker naming convention, for example, converting upper case character to lower case and removes spaces in 
 image name which can happen if you are using $(Build.Repository.Name) to name your images.
 
-### Push Docker images
-Push Docker images with multiple tags to an authenticated Docker Registry and save the resulting repository image digest to a file:
+# [Designer](#tab/designer)
+
+## Container Registry
+
+Container registry settings.
+
+1. Select the container registry type as **Azure Container Registry**.
+
+1. Choose the Azure Subscription from the dropdown. If not configured, select the azure subscription from the list and click on "Authorize".
+
+1. Select an ACR. The container image will be built and pushed to this container registry.
+
+   ![](_img/acrsetings.png)
+
+## Commands
+
+Select an appropriate docker command from the dropdown. Since we are building the image, select the command "build".
+
+1. From the dropdown, select the command "build".
+
+1. Map the dockerfile path.
+
+1. Leave the default settings as is. The detailed description of all the options are described below in the Arguments section.
+
+## Advanced Options
+
+TO_BE_ADDED
+
+## Push Docker images
+
+Push Docker images with multiple tags to an authenticated Docker Registry and save the resulting repository image digest to a file.
+
+# [YAML](#tab/yaml)
+
+Below is the sampl yaml file to push the docker image to a ACR.
 
 ```yaml
 - task: Docker@1
@@ -73,9 +142,24 @@ Push Docker images with multiple tags to an authenticated Docker Registry and sa
     command: 'push'
 ```
 This will result in a docker login to the container registry by using the service connection and then a docker push command will be used to push the image to the container registry. For example, a simplified version of the command run is:
+
 > docker push contoso.azurecr.io/contoso-ci:11
 
-### Build, tag and push container image
+# [Designer](#tab/designer)
+
+Since we are pushing the docker image to a ACR, select the command "push".
+
+1. From the dropdown, select the command "push".
+
+1. 
+
+1.
+
+1.
+
+
+## Build, tag and push container image
+
 Here is an end to end sample yaml for building, tagging and pushing container image.
 ```yaml
 - task: Docker@1
@@ -95,7 +179,8 @@ Here is an end to end sample yaml for building, tagging and pushing container im
     imageName: 'contoso.azurecr.io/$(Build.Repository.Name):$(Build.BuildId)'
 ```
 
-### Login to a container registry and run scripts
+## Login to a container registry and run scripts
+
 Task makes it easy to use either 'Docker registry service connection' for connecting to any private container registry or 'Azure Service Connection' For connecting to ACR. For example, in the case of ACR you don't have to enable 'admin user' and manage username and password as secret. The task will use the Azure Service connection to login to ACR.
 Once you have used the task to login, the session is maintained for the duration of the job thus allowing  you to use follow-up tasks to execute any scripts by leveraging the login done by the Docker task. 
 For example, You can use the Docker task to sign into ACR and then use a subsequent script to pull an image and scan the container image for vulnerabilities.
@@ -115,7 +200,8 @@ For example, You can use the Docker task to sign into ACR and then use a subsequ
    displayName: 'Build, tag and push image'
 ```
 
-### Run Docker images
+## Run Docker images
+
 Perform isolated workloads inside a container by running a Docker image. A Docker image can also be run in the background with a specific restart policy.
 ```yaml
 - task: Docker@1
