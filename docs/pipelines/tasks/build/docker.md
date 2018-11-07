@@ -76,7 +76,7 @@ This will result in a docker login to the container registry by using the servic
 
 ## Commands
 
-Once the connection is established to the ACR, we can now run docker build to build teh container images. Below is the sample yaml file to build the container image.
+Once the connection is established to the ACR, we can now run docker build to build the container images. Below is the sample yaml file to build the container image.
 
 ```yaml
 - task: Docker@1
@@ -160,7 +160,8 @@ Since we are pushing the docker image to a ACR, select the command "push".
 
 ## Build, tag and push container image
 
-Here is an end to end sample yaml for building, tagging and pushing container image.
+Here is an end to end sample yaml for building, tagging and pushing the container image.
+
 ```yaml
 - task: Docker@1
   displayName: 'Build an image'
@@ -181,7 +182,7 @@ Here is an end to end sample yaml for building, tagging and pushing container im
 
 ## Login to a container registry and run scripts
 
-Task makes it easy to use either 'Docker registry service connection' for connecting to any private container registry or 'Azure Service Connection' For connecting to ACR. For example, in the case of ACR you don't have to enable 'admin user' and manage username and password as secret. The task will use the Azure Service connection to login to ACR.
+Task makes it easy to use either **Docker registry service connection** for connecting to any private container registry or **Azure Service Connection** for connecting to ACR. For example, in the case of ACR you don't have to enable 'admin user' and manage username and password as secret. The task will use the Azure Service connection to login to ACR.
 Once you have used the task to login, the session is maintained for the duration of the job thus allowing  you to use follow-up tasks to execute any scripts by leveraging the login done by the Docker task. 
 For example, You can use the Docker task to sign into ACR and then use a subsequent script to pull an image and scan the container image for vulnerabilities.
 
@@ -224,38 +225,51 @@ This will result in a docker run command. For example:
 
 ## Arguments
 
+The arguments which are in the docker task are segregated into different sections which are listed below in the tabs.
+
+# [Container Registry](#tab/containerregistry)
+
+![Container Registry](_img/acrsetings.png)
+
+For Azure Container Registry,
+
 <table><thead><tr><th>Argument</th><th>Description</th></tr></thead>
-<tr><td>Container Registry Type</td><td>(Required) Select a Container Registry Type.</td></tr>
-<tr><td>Docker Registry Connection</td><td>(Optional) Select a Docker registry connection. Required for commands that need to authenticate with a registry.</td></tr>
-<tr><td>Azure subscription</td><td>(Optional) Select an Azure subscription</td></tr>
-<tr><td>Azure Container Registry</td><td>(Optional) Select an Azure Container Registry</td></tr>
-<tr><td>Action</td><td>(Required) Select a Docker action.</td></tr>
-<tr><td>Docker File</td><td>(Required) Path to the Docker file to use. Must be within the Docker build context.</td></tr>
-<tr><td>Build Arguments</td><td>(Optional) Build-time variables for the Docker file. Specify each name=value pair on a new line.</td></tr>
-<tr><td>Use Default Build Context</td><td>(Optional) Set the build context to the directory that contains the Docker file.</td></tr>
-<tr><td>Build Context</td><td>(Optional) Path to the build context.</td></tr>
-<tr><td>Image Name</td><td>(Required) Name of the Docker image to build, push, or run.</td></tr>
-<tr><td>Image Names Path</td><td>(Required) Path to a text file that contains the names of the Docker images to tag or push. Each image name is contained on its own line.</td></tr>
-<tr><td>Qualify Image Name</td><td>(Optional) Qualify the image name with the Docker registry connection's hostname if not otherwise specified.</td></tr>
-<tr><td>Additional Image Tags</td><td>(Optional) Additional tags for the Docker image being built or pushed.</td></tr>
-<tr><td>Include Source Tags</td><td>(Optional) Include Git tags when building or pushing the Docker image.</td></tr>
-<tr><td>Include Latest Tag</td><td>(Optional) Include the 'latest' tag when building or pushing the Docker image.</td></tr>
-<tr><td>Image Digest File</td><td>(Optional) Path to a file that is created and populated with the full image repository digest of the Docker image that was pushed.</td></tr>
-<tr><td>Container Name</td><td>(Optional) Name of the Docker container to run.</td></tr>
-<tr><td>Ports</td><td>(Optional) Ports in the Docker container to publish to the host. Specify each host-port:container-port binding on a new line.</td></tr>
-<tr><td>Volumes</td><td>(Optional) Volumes to mount from the host. Specify each host-dir:container-dir on a new line.</td></tr>
-<tr><td>Environment Variables</td><td>(Optional) Environment variables for the Docker container. Specify each name=value pair on a new line.</td></tr>
-<tr><td>Working Directory</td><td>(Optional) The working directory for the Docker container.</td></tr>
-<tr><td>Entrypoint Override</td><td>(Optional) Override the default entrypoint for the Docker container.</td></tr>
-<tr><td>Command</td><td>(Optional) Command to run in the Docker container. For example, if the image contains a simple Python Flask web application you can specify 'python app.py' to launch the web application.</td></tr>
-<tr><td>Run In Background</td><td>(Optional) Run the Docker container in the background.</td></tr>
-<tr><td>Restart Policy</td><td>(Required) Select a restart policy.</td></tr>
-<tr><td>Maximum Restart Retries</td><td>(Optional) The maximum number of restart retries the Docker daemon attempts.</td></tr>
-<tr><td>Command</td><td>(Required) Docker command to execute, with arguments. For example, 'rmi -f image-name' to force remove an image.</td></tr>
-<tr><td>Docker Host Connection</td><td>(Optional) Select a Docker host connection. Defaults to the agent's host.</td></tr>
-<tr><td>Force image name to follow Docker naming convention</td><td>(Optional) If enabled docker image name will be modified to follow Docker naming convention. Converts upper case character to lower case and removes spaces in image name.</td></tr>
-<tr><td>Working Directory</td><td>(Optional) Working directory for the Docker command.</td></tr>
-<tr><td>Memory limit</td><td>(Optional) The maximum amount of memory available to the container as a integer with optional suffixes like '2GB'.</td></tr>
+<tr><td>Container Registry Type</td><td>Select the Azure Container Registry to connect using an Azure Service connection</td></tr>
+<tr><td>Azure subscription</td><td>Select an Azure subscription</td></tr>
+<tr><td>Azure Container Registry</td><td>Select an Azure Container Registry</td></tr>
+</table>
+
+For other private container registries,
+
+<table><thead><tr><th>Argument</th><th>Description</th></tr></thead>
+<tr><td>Container Registry Type</td><td>Select 'Container registry' to connect to Docker Hub or any other private container registry.</td></tr>
+<tr><td>Docker registry service connection</td><td>Select a Docker registry service connection. Required for commands that need to authenticate with a registry.</td></tr>
+</table>
+
+# [Commands](#tab/commands)
+
+![](_img/commands.png)
+
+<table><thead><tr><th>Argument</th><th>Description</th></tr></thead>
+<tr><td>Command</td><td>Build, push, run, tag, login, logout</td></tr>
+<tr><td>Dockerfile</td><td>Path to the Docker file to use. Must be within the Docker build context.</td></tr>
+<tr><td>Arguments</td><td>Build-time variables for the Docker file. Specify each name=value pair on a new line.</td></tr>
+<tr><td>Use default build context</td><td>Set the build context to the directory that contains the Docker file.</td></tr>
+<tr><td>Image Name</td><td>Name of the Docker image to build, push, or run.</td></tr>
+<tr><td>Qualify image name</td><td>Qualify the image name with the Docker registry connection's hostname if not otherwise specified.</td></tr>
+<tr><td>Include source tags</td><td>Include Git tags when building or pushing the Docker image.</td></tr>
+<tr><td>Include latest tag</td><td>Include the 'latest' tag when building or pushing the Docker image.</td></tr>
+<tr><td>Add default labels</td><td>Add CI/CD metadata like repository, commit, build and release information to the container image by using Docker labels.</td></tr>
+</table>
+
+# [Advanced Options](#tab/advancedoptions)
+
+![Advanced Options](_img/advanced-options.png)
+
+<table><thead><tr><th>Argument</th><th>Description</th></tr></thead>
+<tr><td>Docker host service connection</td><td>Select a Docker host connection. Defaults to the agent's host</td></tr>
+<tr><td>Force image name to follow Docker naming convention</td><td>If enabled docker image name will be modified to follow Docker naming convention. Converts upper case character to lower case and removes spaces in image name.</td></tr>
+<tr><td>Memory limit</td><td>The maximum amount of memory available to the container as a integer with optional suffixes like '2GB'.</td></tr>
 [!INCLUDE [temp](../_shared/control-options-arguments.md)]
 </table>
 
